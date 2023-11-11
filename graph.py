@@ -1,28 +1,7 @@
-# Graph class if possible
-# class Vertex:
-#     def __init__(self,vertex):
-#         self.id = vertex
-#         self.vertexNeighbours = {}
-# class Graph:
-#     # Constructor
-#     def __init__(self,n):
-#         # # create a adjacency list to hold vertices, edges and weight
-#         # self.graphAdjList = []
-
-#         # create a list to hold all the vertices objects
-#         self.verticesList = []
-
-#         # load the vertices list will all the vertices and objects
-#         # and add empty 
-#         for i in range(1,n+1):
-#             self.createVertices(i)
-
-    
-#     def createVertices(self,vertex):
-#         self.verticesList.append(Vertex(vertex))
-
 import random
+import time
 from queue import Queue
+from collections import defaultdict
 
 def bellmanFordAlgo(n,graph,sourceVertex):
 
@@ -67,8 +46,8 @@ def breadthFirstSearch(n,graph,sourceVertex):
     def bfsForVertex(vertex):
 
         for col in range(0,n):
-            if col != vertex and graph[vertex][col] > 0 and col not in verticesPathDistance:
-                verticesPathDistance[col] = 1
+            if col != vertex and graph[vertex][col] != 0 and col not in verticesPathDistance:
+                verticesPathDistance[col] = verticesPathDistance[vertex] + 1
                 vertQueue.put(col)
             elif col == vertex and col not in verticesPathDistance:
                 verticesPathDistance[col] = 0
@@ -84,7 +63,7 @@ def breadthFirstSearch(n,graph,sourceVertex):
     vertQueue = Queue(n)
 
     # Dictionary to hold distance of vertices
-    verticesPathDistance = {}
+    verticesPathDistance = defaultdict(lambda: 0)
 
     # For Vertex 0 check the shortest path for vertices connected and add connected vertices to queue
     bfsForVertex(sourceVertex)
@@ -93,7 +72,7 @@ def breadthFirstSearch(n,graph,sourceVertex):
     relaxQueue()
 
     # Printing the vertices and distance for testing
-    print(verticesPathDistance)
+    print(verticesPathDistance.items())
 
 
 def djikstrasShortestPath(n,graph,sourceVertex):
@@ -103,17 +82,19 @@ def djikstrasShortestPath(n,graph,sourceVertex):
             return
         if vertex in visitedVertices:
             return
-        unvisitedVertices.pop(vertex)
+        unvisitedVertices.remove(vertex)
         visitedVertices.append(vertex)
         for i in range(0,n):
             if vertex != i and graph[vertex][i] > 0 and verticesPathDistance[i] > (verticesPathDistance[vertex] + graph[vertex][i]):
                 verticesPathDistance[i] = verticesPathDistance[vertex] + graph[vertex][i]
         
         minVertex = 0
+        minDistance = float('inf')
         for i in range(0,n):
             if vertex != i and graph[vertex][i] > 0:
-                if minVertex > verticesPathDistance[i]:
+                if minDistance > verticesPathDistance[i]:
                     minVertex = i
+                    minDistance = verticesPathDistance[i]
         
         relaxation(minVertex)
 
@@ -146,28 +127,42 @@ if __name__ == "__main__":
     n = int(input("Please enter the number of vertices: "))
 
     # Taking source vertex as input
-    sourceVertex = int(input("Please enter the source vertex: "))
+    sourceVertex = 0 #input("Please enter the source vertex: ")
 
     # Taking the algorithm to be selected by user
     algorithm = input("Please enter B-BFS, D-Djikstra , F-Bellman Ford: ")
     algorithm = algorithm.upper()
 
     # Build 2d Array for Weighted Graph
-    # graph = [ [random.randrange(1,20) for i in range(0,n)] for j in range(0,n)]
+    graph = [ [random.randrange(1,20) for i in range(0,n)] for j in range(0,n)]
 
-    # Djikstra Test Case
+    # Djikstra/BFS Test Case
     # graph = [[0,2,4,0,0,0],[0,0,1,7,0,0],[0,0,0,0,3,0],[0,0,0,0,0,1],[0,0,0,2,0,5],[0,0,0,0,0,0]]
 
-    # Bellman Ford Test Case
-    graph = [[0,6,5,5,0,0,0],[0,0,0,0,-1,0,0],[0,-2,0,0,1,0,0],[0,0,-2,0,0,-1,0],[0,0,0,0,0,0,3],[0,0,0,0,0,0,3],[0,0,0,0,0,0,0]]
+    # Bellman/BFS Ford Test Case
+    # graph = [[0,6,5,5,0,0,0],[0,0,0,0,-1,0,0],[0,-2,0,0,1,0,0],[0,0,-2,0,0,-1,0],[0,0,0,0,0,0,3],[0,0,0,0,0,0,3],[0,0,0,0,0,0,0]]
 
     # Printing graph just to use it to do testing
+    print("\n")
+    print("Generated Graph:")
     print(graph)
-
+    print("\n")
     if algorithm == "B":
+        print("Breadth First Search: ")
+        bfsStartTime = time.monotonic_ns()
         breadthFirstSearch(n,graph,sourceVertex)
+        bfsEndTime = time.monotonic_ns()
+        print("Time taken to find the distance of all other nodes from source node: ",(bfsEndTime-bfsStartTime)/1000)
     elif algorithm == "D":
+        print("Djikstra: ")
+        djikstraStartTime = time.monotonic_ns()
         djikstrasShortestPath(n,graph,sourceVertex)
+        djikstraEndTime = time.monotonic_ns()
+        print("Time taken to find the distance of all other nodes from source node: ",(djikstraEndTime-djikstraStartTime)/1000)
     elif algorithm == "F":
+        print("Bellman Ford: ")
+        bellmanFordStartTime = time.monotonic_ns()
         bellmanFordAlgo(n,graph,sourceVertex)
+        bellmanFordEndTime = time.monotonic_ns()
+        print("Time taken to find the distance of all other nodes from source node: ",(bellmanFordEndTime-bellmanFordStartTime)/1000)
 
