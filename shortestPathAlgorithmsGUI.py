@@ -172,7 +172,7 @@ class shortestPathAlgorithmsApp:
             Messagebox.show_warning("Please enter the input size range and step size!")
         elif self.compareAlgoVar.get() and ((self.algorithmCombobox1.get() == "" and self.algorithmCombobox2.get() == "") or (self.algorithmCombobox1.get() == "" and self.algorithmCombobox3.get() == "") or (self.algorithmCombobox2.get() == "" and self.algorithmCombobox3.get() == "")):
             Messagebox.show_warning("Please enter atleast two algorithms to compare!")
-        elif self.algorithm not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm1 not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm2 not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm3 not in ["Breadth For Search", "Bellman Ford", "Dijkstra"]:
+        elif ( self.compareAlgoVar.get() == False and self.algorithm.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] ) or ( self.compareAlgoVar.get() == True and (self.algorithm1.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm2.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm3.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"])):
             Messagebox.show_warning("Please enter valid Algorithm")
         else:
             # Trigger the logic of Shortest Path Algorithms

@@ -21,6 +21,13 @@ def createGraph(n):
         for col in graph.adj[row]:
             graph2D[row][col] = graph.adj[row][col]['weight']
 
+    count = n//2
+    while(count > 0):
+        count -= 1
+        row = random.randrange(1,n)
+        col = random.randrange(1,n)
+        graph2D[row][col] = 0
+
     # return the generated 2D Matrix of Graph and it's weight
     return graph2D
 
