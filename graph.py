@@ -1,7 +1,72 @@
 import random
 import time
+import matplotlib.pyplot as algoplot
+import networkx as genGraph
 from queue import Queue
 from collections import defaultdict
+
+def createGraph(n):
+    graph = genGraph.complete_graph(n)
+    graph2D = [[0 for _ in range(n)] for _ in range(n)]
+    for edge in graph.edges():
+        graph[edge[0]][edge[1]]['weight'] = random.randrange(1,20)
+    
+    for row in range(0,n):
+        for col in graph.adj[row]:
+            graph2D[row][col] = graph.adj[row][col]['weight']
+
+    return graph2D
+
+def plotComparisionSameInputSize(n,shortestPathAlgos,timeTaken):
+    algoplot.plot(shortestPathAlgos,timeTaken,marker='o')
+    algoplot.xlabel('Shortest Path Algorithms')
+    algoplot.ylabel('Time Taken in milli seconds')
+    title = 'Comparision of time taken between shortest path algorithms for ' + str(n) + ' Vertices.'
+    algoplot.title(title)
+    algoplot.show()
+
+def plotForDifferentInputSizes(inputSizes,algorithm,timeTaken):
+    algoplot.plot(inputSizes,timeTaken,marker='o')
+    algoplot.xlabel('Input Sizes')
+    algoplot.ylabel('Time Taken in milli seconds')
+    title = 'Comparision of time taken by ' + algorithm + ' for different input sizes.'
+    algoplot.title(title)
+    algoplot.show()
+
+def prepareOut(graph):
+    # Printing graph just to use it to do testing
+    print("\n")
+    print("Generated Graph:")
+    print(graph)
+    print("\n")
+
+def bfsTiming(n,graph,sourceVertex):
+    print("Breadth First Search: ")
+    bfsStartTime = time.monotonic_ns()
+    breadthFirstSearch(n,graph,sourceVertex)
+    bfsEndTime = time.monotonic_ns()
+    timeTaken = (bfsEndTime-bfsStartTime)/1000000
+    print(type(timeTaken))
+    print("Time taken in seconds to find the distance of all other nodes from source node: ", timeTaken)
+    return timeTaken
+
+def djikstraTiming(n,graph,sourceVertex):
+    print("Djikstra: ")
+    djikstraStartTime = time.monotonic_ns()
+    djikstrasShortestPath(n,graph,sourceVertex)
+    djikstraEndTime = time.monotonic_ns()
+    timeTaken = (djikstraEndTime-djikstraStartTime)/1000000
+    print("Time taken in seconds to find the distance of all other nodes from source node: ", timeTaken)
+    return timeTaken
+
+def bellmanFordTiming(n,graph,sourceVertex):
+    print("Bellman Ford: ")
+    bellmanFordStartTime = time.monotonic_ns()
+    bellmanFordAlgo(n,graph,sourceVertex)
+    bellmanFordEndTime = time.monotonic_ns()
+    timeTaken = (bellmanFordEndTime-bellmanFordStartTime)/1000000
+    print("Time taken in seconds to find the distance of all other nodes from source node: ", timeTaken)
+    return timeTaken
 
 def bellmanFordAlgo(n,graph,sourceVertex):
 
@@ -33,7 +98,7 @@ def bellmanFordAlgo(n,graph,sourceVertex):
     # Check if there exits a negative cycle
     hasNegativeCycle = relaxEdges(n,graph,True)
     if hasNegativeCycle == True:
-        print("Cannot determine shorted path, negative cycle exists")
+        print("Cannot determine shortest path, negative cycle exists")
     
     # Print the shortest paths to output for testing
     print(verticesDistanceDict)
@@ -120,21 +185,33 @@ def djikstrasShortestPath(n,graph,sourceVertex):
     relaxation(sourceVertex)
 
     # To test the algorithm
-    print(verticesPathDistance)
+    # print(verticesPathDistance)
 
-if __name__ == "__main__":
+def handleCompare(algorithm,xaxis,yaxis,n,graph,sourceVertex):
+    if algorithm == "Breadth For Search":
+        yaxis.append(bfsTiming(n,graph,sourceVertex))
+        xaxis.append('BFS')
+    elif algorithm == "Bellman Ford":
+        yaxis.append(bellmanFordTiming(n,graph,sourceVertex))
+        xaxis.append('Bellman Ford')
+    elif algorithm == "Dijkstra":
+        yaxis.append(djikstraTiming(n,graph,sourceVertex))
+        xaxis.append('Djikstra')
+
+def main(n,sourceVertex,algorithm,compare,algorithm1,algorithm2,algorithm3):
+
     # Take input from user
-    n = int(input("Please enter the number of vertices: "))
+    # n = int(input("Please enter the number of vertices: "))
 
     # Taking source vertex as input
-    sourceVertex = 0 #input("Please enter the source vertex: ")
+    # sourceVertex = int(input("Please enter the source vertex: "))
 
-    # Taking the algorithm to be selected by user
-    algorithm = input("Please enter B-BFS, D-Djikstra , F-Bellman Ford: ")
-    algorithm = algorithm.upper()
+    # Build 2d Array for Weighted Graph, a 2D array generated
+    # graph = [ [random.randrange(1,20) for i in range(0,n)] for j in range(0,n)]
 
-    # Build 2d Array for Weighted Graph
-    graph = [ [random.randrange(1,20) for i in range(0,n)] for j in range(0,n)]
+    # Check if user wants to compare or run individually
+    # compare = input("Please enter C-To compare between algorithms, I-To run individual algorithms, A-To run all algorithms")
+    # compare = compare.upper()
 
     # Djikstra/BFS Test Case
     # graph = [[0,2,4,0,0,0],[0,0,1,7,0,0],[0,0,0,0,3,0],[0,0,0,0,0,1],[0,0,0,2,0,5],[0,0,0,0,0,0]]
@@ -142,27 +219,71 @@ if __name__ == "__main__":
     # Bellman/BFS Ford Test Case
     # graph = [[0,6,5,5,0,0,0],[0,0,0,0,-1,0,0],[0,-2,0,0,1,0,0],[0,0,-2,0,0,-1,0],[0,0,0,0,0,0,3],[0,0,0,0,0,0,3],[0,0,0,0,0,0,0]]
 
-    # Printing graph just to use it to do testing
-    print("\n")
-    print("Generated Graph:")
-    print(graph)
-    print("\n")
-    if algorithm == "B":
-        print("Breadth First Search: ")
-        bfsStartTime = time.monotonic_ns()
-        breadthFirstSearch(n,graph,sourceVertex)
-        bfsEndTime = time.monotonic_ns()
-        print("Time taken to find the distance of all other nodes from source node: ",(bfsEndTime-bfsStartTime)/1000)
-    elif algorithm == "D":
-        print("Djikstra: ")
-        djikstraStartTime = time.monotonic_ns()
-        djikstrasShortestPath(n,graph,sourceVertex)
-        djikstraEndTime = time.monotonic_ns()
-        print("Time taken to find the distance of all other nodes from source node: ",(djikstraEndTime-djikstraStartTime)/1000)
-    elif algorithm == "F":
-        print("Bellman Ford: ")
-        bellmanFordStartTime = time.monotonic_ns()
-        bellmanFordAlgo(n,graph,sourceVertex)
-        bellmanFordEndTime = time.monotonic_ns()
-        print("Time taken to find the distance of all other nodes from source node: ",(bellmanFordEndTime-bellmanFordStartTime)/1000)
+    if compare == True:
+        # Run algorithms and print their timing based on user selection
+        # Generated using python library graph function
+        graph = createGraph(n)
+        prepareOut(graph)
+        xaxis = []
+        yaxis = []
+        handleCompare(algorithm1,xaxis,yaxis,n,graph,sourceVertex)
+        handleCompare(algorithm2,xaxis,yaxis,n,graph,sourceVertex)
+        handleCompare(algorithm3,xaxis,yaxis,n,graph,sourceVertex)
+        plotComparisionSameInputSize(n,xaxis,yaxis)
 
+    else:
+        # prepareOut(graph)
+        xaxis = []
+        yaxis = []
+        for inSize in range(150,500,10):
+            xaxis.append(inSize)
+            # graph = [ [random.randrange(1,20) for i in range(0,inSize)] for j in range(0,inSize)]
+            graph = createGraph(inSize)
+            if algorithm == "B":
+                yaxis.append(bfsTiming(inSize,graph,sourceVertex))
+                algoTitle = 'BFS'
+            elif algorithm == "D":
+                yaxis.append(djikstraTiming(inSize,graph,sourceVertex))
+                algoTitle = 'Djikstra'
+            elif algorithm == "F":
+                yaxis.append(bellmanFordTiming(inSize,graph,sourceVertex))
+                algoTitle = 'Bellman Form'
+
+        plotForDifferentInputSizes(xaxis,algoTitle,yaxis)
+
+    if compare == 'C':
+        # prepareOut(graph)
+        pass
+    elif compare == 'I':
+        # Taking the algorithm to be selected by user
+        algorithm = input("Please enter B-BFS, D-Djikstra , F-Bellman Ford: ")
+        algorithm = algorithm.upper()
+
+        # prepareOut(graph)
+        xaxis = []
+        yaxis = []
+        for inSize in range(150,500,10):
+            xaxis.append(inSize)
+            # graph = [ [random.randrange(1,20) for i in range(0,inSize)] for j in range(0,inSize)]
+            graph = createGraph(inSize)
+            if algorithm == "B":
+                yaxis.append(bfsTiming(inSize,graph,sourceVertex))
+                algoTitle = 'BFS'
+            elif algorithm == "D":
+                yaxis.append(djikstraTiming(inSize,graph,sourceVertex))
+                algoTitle = 'Djikstra'
+            elif algorithm == "F":
+                yaxis.append(bellmanFordTiming(inSize,graph,sourceVertex))
+                algoTitle = 'Bellman Form'
+
+        plotForDifferentInputSizes(xaxis,algoTitle,yaxis)
+
+    elif compare == 'A':
+        # Run all algorithms and print their timing
+        prepareOut(graph)
+        yaxis = [bfsTiming(n,graph,sourceVertex),djikstraTiming(n,graph,sourceVertex),bellmanFordTiming(n,graph,sourceVertex)]
+        xaxis = ['BFS','Djikstra','Bellman Ford']
+        plotComparisionSameInputSize(n,xaxis,yaxis)
+
+# if __name__ == "__main__":
+#     main()
