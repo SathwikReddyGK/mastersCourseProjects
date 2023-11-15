@@ -126,6 +126,10 @@ class shortestPathAlgorithmsApp:
         self.runButton = ttkb.Button(self.mainFrame,text="Run", style="outline",command=self.runButton)
         self.runButton.grid(row=9, column=0, sticky="w", padx=10, pady=5)
 
+        # Progress Bar
+        # self.progressBar = ttkb.Progressbar(self.root,maximum=100,mode="indeterminate",length=100,value=0)
+        # self.progressBar.grid(row=10,column=0, sticky="w", padx=10, pady=5)
+
     # Hide/Display fields based on compare checkbox
     def compareVisible(self):
         if self.compareAlgoVar.get():
@@ -172,11 +176,13 @@ class shortestPathAlgorithmsApp:
             Messagebox.show_warning("Please enter the input size range and step size!")
         elif self.compareAlgoVar.get() and ((self.algorithmCombobox1.get() == "" and self.algorithmCombobox2.get() == "") or (self.algorithmCombobox1.get() == "" and self.algorithmCombobox3.get() == "") or (self.algorithmCombobox2.get() == "" and self.algorithmCombobox3.get() == "")):
             Messagebox.show_warning("Please enter atleast two algorithms to compare!")
-        elif ( self.compareAlgoVar.get() == False and self.algorithm.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] ) or ( self.compareAlgoVar.get() == True and (self.algorithm1.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm2.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] or self.algorithm3.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"])):
+        elif ( self.compareAlgoVar.get() == False and self.algorithm.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"] ) or ( self.compareAlgoVar.get() == True and ((self.algorithm1.get() and self.algorithm1.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"]) or (self.algorithm2.get() and self.algorithm2.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"]) or (self.algorithm3.get() and self.algorithm3.get() not in ["Breadth For Search", "Bellman Ford", "Dijkstra"]))):
             Messagebox.show_warning("Please enter valid Algorithm")
         else:
+            # self.progressBar.start(10)
             # Trigger the logic of Shortest Path Algorithms
             algoLogic.main(int(self.inputSizeEntry.get()),int(self.sourceVertexEntry.get()),self.algorithm.get(),self.compareAlgoVar.get(),self.algorithm1.get(),self.algorithm2.get(),self.algorithm3.get(),int(self.inputSizeRangeLowEntry.get()),int(self.inputSizeRangeHighEntry.get()),int(self.inputSizeRangeStepSizeEntry.get()),self.inputRangeVar.get())
+            # self.progressBar.stop()
         
 if __name__ == "__main__":
     root = ttkb.Window(themename="cyborg")

@@ -55,7 +55,7 @@ def plotForInputSize(inputSize,algorithm,timeTaken):
     algoplot.plot(inputSize,timeTaken,marker='x')
     algoplot.xlabel('Input Size')
     algoplot.ylabel('Time Taken in milli seconds')
-    title = 'Time taken by ' + algorithm[0] + ' for input size ' + str(inputSize[0]) + '.'
+    title = 'Time taken by ' + algorithm + ' for input size ' + str(inputSize[0]) + '.'
     algoplot.title(title)
     algoplot.show()
 
@@ -106,7 +106,7 @@ def bellmanFordAlgo(n,graph,sourceVertex):
     # Relax all the edges
     def relaxEdges(n,graph,negativeCycleCheck):
         for source in range(0,n):
-            for dest in range(0,n):
+            for dest in range(0,n):    
                 if dest != source and graph[source][dest] != 0 and verticesDistanceDict[dest]>(verticesDistanceDict[source] + graph[source][dest]):
                     if negativeCycleCheck == True:
                         return True
