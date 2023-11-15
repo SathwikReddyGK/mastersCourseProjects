@@ -59,8 +59,8 @@ def plotForInputSize(inputSize,algorithm,timeTaken):
     algoplot.title(title)
     algoplot.show()
 
+# Printing graph just to use it to do testing
 def prepareOut(graph):
-    # Printing graph just to use it to do testing
     print("\n")
     print("Generated Graph:")
     print(graph)
